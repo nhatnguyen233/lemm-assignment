@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ItineraryController } from "../src/controllers";
+import { ItineraryController } from "../controllers";
 
 const mockResponse = () => {
   const res: Partial<Response> = {};
