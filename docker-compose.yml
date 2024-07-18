@@ -10,21 +10,21 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  server:
-    build: ./server
-    ports:
-      - "3001:3001"
-    depends_on:
-      - postgres
-    environment:
-      DATABASE_URL: postgres://admin:123456@postgres:5432/flight_itinerary
+  # server:
+  #   build: ./server
+  #   ports:
+  #     - "8001:8001"
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     DATABASE_URL: postgres://admin:123456@postgres:5432/flight_itinerary
 
-  client:
-    build: ./client
-    ports:
-      - "3000:3000"
-    depends_on:
-      - server
+  # client:
+  #   build: ./client
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - server
 
 volumes:
   postgres_data:

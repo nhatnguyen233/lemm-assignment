@@ -9,7 +9,7 @@ export default function Home() {
 
   const handleOrderItinerary = async () => {
     try {
-      const response = await fetch("http://localhost:3001/order-itinerary", {
+      const response = await fetch("http://localhost:8001/order-itinerary", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
