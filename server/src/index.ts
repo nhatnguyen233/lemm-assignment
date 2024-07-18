@@ -3,7 +3,7 @@ import cors from "cors";
 import { orderItinerary } from "./routes";
 
 const app = express();
-const port = 8001;
+const port = process.env.PORT;
 
 app.use(express.json());
 app.use(

@@ -2,10 +2,37 @@
 
 import { useState } from "react";
 
-export default function Home() {
-  const [itinerary, setItinerary] = useState("");
+interface ItinerarySegment {
+  from: string;
+  to: string;
+}
+
+const Home = () => {
+  const [itineraryItems, setItineraryItems] = useState<ItinerarySegment[]>([
+    { from: "", to: "" },
+  ]);
   const [orderedItinerary, setOrderedItinerary] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  const handleInputChange = (
+    index: number,
+    key: keyof ItinerarySegment,
+    value: string
+  ) => {
+    const updatedItems = [...itineraryItems];
+    updatedItems[index][key] = value;
+    setItineraryItems(updatedItems);
+  };
+
+  const addItineraryItem = () => {
+    setItineraryItems([...itineraryItems, { from: "", to: "" }]);
+  };
+
+  const removeItineraryItem = (index: number) => {
+    const updatedItems = [...itineraryItems];
+    updatedItems.splice(index, 1);
+    setItineraryItems(updatedItems);
+  };
 
   const handleOrderItinerary = async () => {
     try {
@@ -14,7 +41,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(JSON.parse(itinerary)),
+        body: JSON.stringify(itineraryItems),
       });
 
       if (!response.ok) {
@@ -33,20 +60,43 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center">
       <div className="bg-white p-8 rounded-lg shadow-md w-96 text-black">
-        {" "}
-        {/* Add text-black class here */}
-        <h1 className="text-2xl font-semibold mb-4">
-          Flight Itinerary Orderer
-        </h1>
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-semibold">Flight Itinerary Orderer</h1>
+          <button
+            className="bg-blue-500 text-white py-1 px-2 rounded-md text-sm hover:bg-blue-600 focus:outline-none"
+            onClick={addItineraryItem}
+          >
+            Add
+          </button>
+        </div>
         {error && <p className="text-red-500 mb-4">{error}</p>}
-        <textarea
-          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
-          placeholder="Enter flight itinerary (JSON format)"
-          value={itinerary}
-          onChange={(e) => setItinerary(e.target.value)}
-        ></textarea>
+        {itineraryItems.map((item, index) => (
+          <div key={index} className="mb-4 flex items-center space-x-4">
+            <input
+              type="text"
+              placeholder="From"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+              value={item.from}
+              onChange={(e) => handleInputChange(index, "from", e.target.value)}
+            />
+            <span>→</span>
+            <input
+              type="text"
+              placeholder="To"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+              value={item.to}
+              onChange={(e) => handleInputChange(index, "to", e.target.value)}
+            />
+            <button
+              className="bg-red-500 text-white py-1 px-2 rounded-md text-sm hover:bg-red-600 focus:outline-none"
+              onClick={() => removeItineraryItem(index)}
+            >
+              X
+            </button>
+          </div>
+        ))}
         <button
-          className="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:bg-blue-600"
+          className="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
           onClick={handleOrderItinerary}
         >
           Order Itinerary
@@ -66,4 +116,6 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};
+
+export default Home;
