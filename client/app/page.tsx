@@ -9,7 +9,10 @@ interface ItinerarySegment {
 
 const Home = () => {
   const [itineraryItems, setItineraryItems] = useState<ItinerarySegment[]>([
-    { from: "", to: "" },
+    { from: "SFO", to: "GRU" },
+    { from: "EZE", to: "MIA" },
+    { from: "GRU", to: "SCL" },
+    { from: "MIA", to: "SFO" },
   ]);
   const [orderedItinerary, setOrderedItinerary] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +40,7 @@ const Home = () => {
   const handleOrderItinerary = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_API_URL}/order-itinerary`,
+        `${process.env.NEXT_PUBLIC_SERVER_API_URL}/itinerary/order`,
         {
           method: "POST",
           headers: {

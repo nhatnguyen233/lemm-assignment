@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { orderItinerary } from "./routes";
+import { ItineraryRoute } from "./routes";
 
 const app = express();
 const port = process.env.PORT;
@@ -12,7 +12,7 @@ app.use(
   })
 );
 
-app.post("/order-itinerary", orderItinerary);
+app.use("/itinerary", ItineraryRoute);
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
