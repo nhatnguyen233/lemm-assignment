@@ -1,11 +1,6 @@
 import { Pool } from "pg";
+import { config } from "./config";
 
-const pool = new Pool({
-  user: "admin",
-  host: "localhost",
-  database: "flight_itinerary",
-  password: "123456",
-  port: 5432,
-});
+const pool = new Pool(config.DB_CONFIG);
 
 export default pool;

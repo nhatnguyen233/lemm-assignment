@@ -11,20 +11,32 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   server:
-    build: ./server
+    build:
+      context: ./server
+      platforms:
+        - "linux/amd64"
+        - "linux/arm64"
     ports:
       - "8001:8001"
+    env_file:
+      - ./server/.env.local
     depends_on:
       - postgres
-    environment:
-      DATABASE_URL: postgres://admin:123456@postgres:5432/flight_itinerary
 
   client:
-    build: ./client
+    build:
+      context: ./client
+      platforms:
+        - "linux/amd64"
+        - "linux/arm64"
     ports:
       - "8000:8000"
+    env_file:
+      - ./client/.env.local
     depends_on:
       - server
+    volumes:
+      - ./client:/usr/src/app
 
 volumes:
   postgres_data:

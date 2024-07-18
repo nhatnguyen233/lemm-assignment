@@ -36,13 +36,16 @@ const Home = () => {
 
   const handleOrderItinerary = async () => {
     try {
-      const response = await fetch("http://localhost:8001/order-itinerary", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(itineraryItems),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_API_URL}/order-itinerary`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(itineraryItems),
+        }
+      );
 
       if (!response.ok) {
         const errorMessage = await response.text();
