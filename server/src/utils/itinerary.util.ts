@@ -1,56 +1,35 @@
 import { ItinerarySegment } from "../interfaces";
 
-export function validateItinerary(flights: ItinerarySegment[]) {
-  const destinations = new Set();
-  const origins = new Set();
-
-  if (flights.length === 0) {
-    throw new Error("Invalid itinerary");
-  }
+export const validateItinerary = (flights: ItinerarySegment[]): void => {
+  const flightMap = new Map<string, string>();
+  const reverseMap = new Map<string, string>();
+  const destinationSet = new Set<string>();
 
   flights.forEach((flight) => {
-    if (destinations.has(flight.to)) {
-      throw new Error(`Duplicate destination: ${flight.to}`);
+    if (destinationSet.has(flight.to)) {
+      throw new Error(`Duplicate destination found: ${flight.to}`);
     }
-    if (origins.has(flight.from)) {
-      throw new Error(`Duplicate origin: ${flight.from}`);
-    }
-    destinations.add(flight.to);
-    origins.add(flight.from);
+    destinationSet.add(flight.to);
+    flightMap.set(flight.from, flight.to);
+    reverseMap.set(flight.to, flight.from);
   });
 
-  if (destinations.size !== flights.length || origins.size !== flights.length) {
-    throw new Error("Invalid itinerary");
-  }
-}
+  const startPoint = flights.find(
+    (flight) => !reverseMap.has(flight.from)
+  )?.from;
+  if (!startPoint)
+    throw new Error("Invalid itinerary: No valid start point found.");
 
-export function sortItinerary(flights: ItinerarySegment[]): ItinerarySegment[] {
-  const map = new Map<string, string>();
-  const reverseMap = new Map<string, string>();
-
-  flights.forEach(({ from, to }) => {
-    map.set(from, to);
-    reverseMap.set(to, from);
-  });
-
-  let start = "";
-  for (const from of map.keys()) {
-    if (!reverseMap.has(from)) {
-      start = from;
-      break;
-    }
+  let currentPoint = startPoint;
+  const orderedFlights: ItinerarySegment[] = [];
+  while (currentPoint) {
+    const nextPoint = flightMap.get(currentPoint);
+    if (!nextPoint) break;
+    orderedFlights.push({ from: currentPoint, to: nextPoint });
+    currentPoint = nextPoint;
   }
 
-  const orderedItinerary: ItinerarySegment[] = [];
-  while (start) {
-    const to = map.get(start);
-    if (to) {
-      orderedItinerary.push({ from: start, to });
-      start = to;
-    } else {
-      start = "";
-    }
+  if (orderedFlights.length !== flights.length) {
+    throw new Error("Invalid itinerary: Orphan flight found.");
   }
-
-  return orderedItinerary;
-}
+};
