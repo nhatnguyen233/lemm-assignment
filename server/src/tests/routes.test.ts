@@ -1,5 +1,6 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { ItineraryController } from "../controllers";
+import { OrderItineraryRequest } from "../interfaces";
 
 const mockResponse = () => {
   const res: Partial<Response> = {};
@@ -9,7 +10,7 @@ const mockResponse = () => {
 };
 
 describe("ItineraryOrder", () => {
-  let req: Partial<Request>;
+  let req: Partial<OrderItineraryRequest>;
   let res: Response;
 
   beforeEach(() => {
@@ -34,7 +35,7 @@ describe("ItineraryOrder", () => {
       { from: "GRU", to: "SCL" },
     ];
 
-    ItineraryController.orderItinerary(req as Request, res);
+    ItineraryController.orderItinerary(req as OrderItineraryRequest, res);
 
     expect(res.json).toHaveBeenCalledWith(expectedOutput);
   });
@@ -46,7 +47,7 @@ describe("ItineraryOrder", () => {
       { from: "GRU", to: "SCL" },
     ];
 
-    ItineraryController.orderItinerary(req as Request, res);
+    ItineraryController.orderItinerary(req as OrderItineraryRequest, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ error: "Invalid itinerary" });
@@ -61,7 +62,7 @@ describe("ItineraryOrder", () => {
       { from: "MIA", to: "SFO" },
     ];
 
-    ItineraryController.orderItinerary(req as Request, res);
+    ItineraryController.orderItinerary(req as OrderItineraryRequest, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ error: "Invalid itinerary" });
@@ -70,7 +71,7 @@ describe("ItineraryOrder", () => {
   test("should handle empty input", () => {
     req.body = [];
 
-    ItineraryController.orderItinerary(req as Request, res);
+    ItineraryController.orderItinerary(req as OrderItineraryRequest, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ error: "Invalid itinerary" });

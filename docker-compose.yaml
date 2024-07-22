@@ -35,8 +35,6 @@ services:
       - ./client/.env.local
     depends_on:
       - server
-    volumes:
-      - ./client:/usr/src/app
 
 volumes:
   postgres_data:

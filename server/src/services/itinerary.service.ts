@@ -1,39 +1,30 @@
+import Itinerary from "../db/models/itinerary.model";
 import { ItinerarySegment } from "../interfaces";
+import { sortItinerary, validateItinerary } from "../utils/itinerary.util";
 
 export class ItineraryService {
-  static orderItinerary = (itinerary: ItinerarySegment[]) => {
-    const originToDest: { [key: string]: string } = {};
-    const destinations = new Set<string>();
+  static orderItinerary = async (
+    requesterIp: string,
+    itinerary: ItinerarySegment[]
+  ) => {
+    try {
+      validateItinerary(itinerary);
+      const orderedItinerary = sortItinerary(itinerary);
 
-    itinerary.forEach((segment) => {
-      originToDest[segment.from] = segment.to;
-      destinations.add(segment.to);
-    });
+      const timestamp = new Date();
 
-    let start: string | null = null;
-    for (const segment of itinerary) {
-      if (!destinations.has(segment.from)) {
-        start = segment.from;
-        break;
+      for (const flight of orderedItinerary) {
+        await Itinerary.create({
+          from_airport: flight.from,
+          to_airport: flight.to,
+          requester_ip: requesterIp,
+          timestamp,
+        });
       }
-    }
 
-    if (!start) {
-      throw new Error("Invalid itinerary");
+      return orderedItinerary;
+    } catch (error) {
+      throw error;
     }
-
-    const orderedItinerary = [];
-    let current = start;
-    while (originToDest[current]) {
-      const nextDestination = originToDest[current];
-      orderedItinerary.push({ from: current, to: nextDestination });
-      current = nextDestination;
-    }
-
-    if (orderedItinerary.length !== itinerary.length) {
-      throw new Error("Invalid itinerary");
-    }
-
-    return orderedItinerary;
   };
 }
