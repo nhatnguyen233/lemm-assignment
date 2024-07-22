@@ -3,8 +3,7 @@ import sequelize from "../";
 
 class Itinerary extends Model {
   public id!: number;
-  public from_airport!: string;
-  public to_airport!: string;
+  public flights!: string;
   public requester_ip!: string;
   public timestamp!: Date;
 }
@@ -16,17 +15,13 @@ Itinerary.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    from_airport: {
-      type: DataTypes.STRING(3),
-      allowNull: false,
-    },
-    to_airport: {
-      type: DataTypes.STRING(3),
+    flights: {
+      type: DataTypes.JSON,
       allowNull: false,
     },
     requester_ip: {
-      type: DataTypes.STRING(45),
-      allowNull: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     timestamp: {
       type: DataTypes.DATE,

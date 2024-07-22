@@ -13,12 +13,8 @@ import sequelize from "..";
         autoIncrement: true,
         primaryKey: true,
       },
-      from_airport: {
-        type: DataTypes.STRING(3),
-        allowNull: false,
-      },
-      to_airport: {
-        type: DataTypes.STRING(3),
+      flights: {
+        type: DataTypes.JSON,
         allowNull: false,
       },
       requester_ip: {
