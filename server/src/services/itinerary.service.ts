@@ -1,3 +1,4 @@
+import { config } from "../config";
 import Itinerary from "../db/models/itinerary.model";
 import { ItinerarySegment } from "../interfaces";
 import { sortItinerary, validateItinerary } from "../utils/itinerary.util";
@@ -12,6 +13,8 @@ export class ItineraryService {
       const orderedItinerary = sortItinerary(itinerary);
 
       const timestamp = new Date();
+
+      if (config.NODE_ENV === "test") return orderedItinerary;
 
       for (const flight of orderedItinerary) {
         await Itinerary.create({

@@ -1,4 +1,6 @@
 export const config = {
+  PORT: process.env.PORT ?? "8001",
+  NODE_ENV: String(process.env.NODE_ENV ?? "development"),
   DB_CONFIG: {
     user: String(process.env.DATABASE_USER ?? "admin"),
     host: String(process.env.DATABASE_HOST ?? "postgres"),

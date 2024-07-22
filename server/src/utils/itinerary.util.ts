@@ -4,6 +4,10 @@ export function validateItinerary(flights: ItinerarySegment[]) {
   const destinations = new Set();
   const origins = new Set();
 
+  if (flights.length === 0) {
+    throw new Error("Invalid itinerary");
+  }
+
   flights.forEach((flight) => {
     if (destinations.has(flight.to)) {
       throw new Error(`Duplicate destination: ${flight.to}`);

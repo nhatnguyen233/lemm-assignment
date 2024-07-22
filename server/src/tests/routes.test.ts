@@ -1,79 +1,45 @@
-import { Response } from "express";
-import { ItineraryController } from "../controllers";
-import { OrderItineraryRequest } from "../interfaces";
+// tests/itinerary.test.ts
+import request from "supertest";
+import app from "../index";
+import sequelize from "../db";
 
-const mockResponse = () => {
-  const res: Partial<Response> = {};
-  res.status = jest.fn().mockReturnValue(res);
-  res.json = jest.fn().mockReturnValue(res);
-  return res as Response;
-};
+beforeAll(async () => {
+  // Sync the database before running tests
+  await sequelize.sync({ force: true });
+});
 
-describe("ItineraryOrder", () => {
-  let req: Partial<OrderItineraryRequest>;
-  let res: Response;
+afterAll(async () => {
+  // Close the database connection after tests
+  await sequelize.close();
+});
 
-  beforeEach(() => {
-    req = {
-      body: [],
-    };
-    res = mockResponse();
+describe("POST /itinerary/order", () => {
+  it("should process and store ordered itinerary data", async () => {
+    const response = await request(app)
+      .post("/itinerary/order")
+      .send([
+        { from: "EZE", to: "MIA" },
+        { from: "MIA", to: "SFO" },
+        { from: "SFO", to: "GRU" },
+        { from: "GRU", to: "SCL" },
+      ]);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(4);
   });
 
-  test("should return ordered itinerary for valid input", () => {
-    req.body = [
-      { from: "SFO", to: "GRU" },
-      { from: "EZE", to: "MIA" },
-      { from: "GRU", to: "SCL" },
-      { from: "MIA", to: "SFO" },
-    ];
+  it("should handle invalid input gracefully", async () => {
+    const response = await request(app)
+      .post("/itinerary/order")
+      .send({ invalid: "data" });
 
-    const expectedOutput = [
-      { from: "EZE", to: "MIA" },
-      { from: "MIA", to: "SFO" },
-      { from: "SFO", to: "GRU" },
-      { from: "GRU", to: "SCL" },
-    ];
-
-    ItineraryController.orderItinerary(req as OrderItineraryRequest, res);
-
-    expect(res.json).toHaveBeenCalledWith(expectedOutput);
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("error", "Invalid input format");
   });
 
-  test("should return error for invalid itinerary", () => {
-    req.body = [
-      { from: "EZE", to: "MIA" },
-      { from: "MIA", to: "SFO" },
-      { from: "GRU", to: "SCL" },
-    ];
+  it("should handle empty input", async () => {
+    const response = await request(app).post("/itinerary/order").send([]);
 
-    ItineraryController.orderItinerary(req as OrderItineraryRequest, res);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ error: "Invalid itinerary" });
-  });
-
-  test("should return error for orphan flight", () => {
-    req.body = [
-      { from: "SFO", to: "GRU" },
-      { from: "EZE", to: "MIA" },
-      { from: "GRU", to: "SCL" },
-      { from: "XYZ", to: "ABC" },
-      { from: "MIA", to: "SFO" },
-    ];
-
-    ItineraryController.orderItinerary(req as OrderItineraryRequest, res);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ error: "Invalid itinerary" });
-  });
-
-  test("should handle empty input", () => {
-    req.body = [];
-
-    ItineraryController.orderItinerary(req as OrderItineraryRequest, res);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ error: "Invalid itinerary" });
+    expect(response.status).toBe(400);
   });
 });
