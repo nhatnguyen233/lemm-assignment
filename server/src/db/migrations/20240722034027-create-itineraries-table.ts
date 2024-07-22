@@ -1,10 +1,12 @@
 "use strict";
 
 import { QueryInterface, DataTypes } from "sequelize";
+import sequelize from "..";
 
-/** @type {import('sequelize-cli').Migration} */
-export default {
-  up: async (queryInterface: QueryInterface) => {
+(async () => {
+  const queryInterface: QueryInterface = sequelize.getQueryInterface();
+
+  try {
     await queryInterface.createTable("itineraries", {
       id: {
         type: DataTypes.INTEGER,
@@ -29,8 +31,9 @@ export default {
         defaultValue: DataTypes.NOW,
       },
     });
-  },
-  down: async (queryInterface: QueryInterface) => {
-    await queryInterface.dropTable("itineraries");
-  },
-};
+  } catch (error) {
+    console.error("Error creating itineraries table:", error);
+  } finally {
+    await sequelize.close();
+  }
+})();

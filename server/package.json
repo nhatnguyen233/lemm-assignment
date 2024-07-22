@@ -8,7 +8,7 @@
     "start": "ts-node src/index.ts",
     "test": "DATABASE_HOST=localhost NODE_ENV=test jest",
     "test:watch": "jest --watch",
-    "migrate:up": "ts-node src/db/migrations/001_create_itineraries_table.ts"
+    "migrate:up": "DATABASE_HOST=localhost ts-node src/db/migrations/20240722034027-create-itineraries-table.ts"
   },
   "keywords": [],
   "author": "",
