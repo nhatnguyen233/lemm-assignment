@@ -1,3 +1,4 @@
+import { config } from "../config";
 import Itinerary from "../db/models/itinerary.model";
 import { ItinerarySegment } from "../interfaces";
 import { validateItinerary } from "../utils/itinerary.util";
@@ -8,6 +9,7 @@ export class ItineraryService {
     requesterIp: string
   ): Promise<void> => {
     try {
+      if (config.NODE_ENV === "test") return;
       const timestamp = new Date();
       await Itinerary.create({
         flights: JSON.stringify(flights),

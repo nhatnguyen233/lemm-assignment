@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "ts-node src/index.ts",
-    "test": "DATABASE_HOST=localhost NODE_ENV=test jest",
-    "test:watch": "jest --watch",
+    "test": "NODE_ENV=test jest",
+    "test:watch": "NODE_ENV=test jest --watch",
     "migrate:up": "DATABASE_HOST=localhost ts-node src/db/migrations/20240722034027-create-itineraries-table.ts"
   },
   "keywords": [],

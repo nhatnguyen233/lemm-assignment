@@ -34,11 +34,10 @@ import sequelize from "..";
         },
       });
       console.log("Table 'itineraries' created successfully.");
+    } else {
+      console.log("Table 'itineraries' already existed.");
     }
-    console.log("Table 'itineraries' already existed.");
   } catch (error) {
     console.error("Error creating itineraries table:", error);
-  } finally {
-    await sequelize.close();
   }
 })();
