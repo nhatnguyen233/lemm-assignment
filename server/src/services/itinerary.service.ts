@@ -1,6 +1,7 @@
 import { config } from "../config";
 import Itinerary from "../db/models/itinerary.model";
 import { ItinerarySegment } from "../interfaces";
+import { addItineraryJob } from "../queues/itinerary.queue";
 import { validateItinerary } from "../utils/itinerary.util";
 
 export class ItineraryService {
@@ -10,11 +11,11 @@ export class ItineraryService {
   ): Promise<void> => {
     try {
       if (config.NODE_ENV === "test") return;
-      const timestamp = new Date();
-      await Itinerary.create({
-        flights: JSON.stringify(flights),
-        requester_ip: requesterIp,
-        timestamp,
+      // Add a job to the queue
+      addItineraryJob({
+        flights,
+        requesterIp,
+        timestamp: new Date(),
       });
     } catch (error) {
       throw error;
